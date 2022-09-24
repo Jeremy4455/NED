@@ -11,7 +11,15 @@ from NED.items import NedItem
 
 class NedPipeline:
     def process_item(self, item, spider):
-        if isinstance(item, NedItem):
-            with open(f'Data/{item["title"]}.txt', 'w', encoding='UTF-8') as f:
-                f.write(item['text'])
-        return item
+        if item['text'] != "":
+            try:
+                with open(f"Data/{item['title']}.txt", "w", encoding='UTF-8') as f:
+                    f.write(item['text'])
+            except Exception as e:
+                if isinstance(e, OSError):
+                    item['title'] = item['title'][:5]
+                    with open(f"Data/{item['title']}.txt", "w", encoding='UTF-8') as f:
+                        f.write(item['text'])
+                else:
+                    print(e.args)
+        return
